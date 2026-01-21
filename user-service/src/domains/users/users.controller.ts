@@ -16,7 +16,6 @@ import { UserRequestDTO } from './dto/userRequest.dto';
 import { UserService } from './users.service';
 
 @Controller('/users')
-@UseGuards(AuthenticationGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -28,11 +27,13 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
+  @UseGuards(AuthenticationGuard)
   async getUsers() {
     return await this.userService.getAll();
   }
 
   @Get('/:id')
+  @UseGuards(AuthenticationGuard)
   async getUserById(@Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.getOne(id);
     if (!user) {
@@ -42,6 +43,7 @@ export class UserController {
   }
 
   @Patch('/:id')
+  @UseGuards(AuthenticationGuard)
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UserRequestDTO,
@@ -50,6 +52,7 @@ export class UserController {
   }
 
   @Delete('/:id')
+  @UseGuards(AuthenticationGuard)
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return await this.userService.delete(id);
   }
