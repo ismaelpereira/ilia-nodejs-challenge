@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+   postgres-user:
+      image: postgres:15
+      environment:
+         POSTGRES_DB: users
+         POSTGRES_USER: postgres
+         POSTGRES_PASSWORD: postgres
+      ports:
+         - "5433:5432"
+
+   postgres-wallet:
+      image: postgres:15
+      environment:
+         POSTGRES_DB: wallet
+         POSTGRES_USER: postgres
+         POSTGRES_PASSWORD: postgres
+      ports:
+         - "5434:5432"
+
+   user-service:
+      build: ./user-service
+      env_file:
+         - ./user-service/.env
+      environment:
+         - FIREBASE_CREDENTIALS=/app/credentials.json
+         - PORT=3001 
+         - DATABASE_URL=postgresql://postgres:postgres@postgres-user:5432/users # host é o nome do serviço
+      depends_on:
+         - postgres-user
+      ports:
+         - "3001:3001"
+
+   wallet-service:
+      build: ./wallet-service
+      env_file:
+         - ./wallet-service/.env
+      environment:
+         - PORT=3002
+         - DATABASE_URL=postgresql://postgres:postgres@postgres-wallet:5432/wallet
+      depends_on:
+         - postgres-wallet
+      ports:
+         - "3002:3002"

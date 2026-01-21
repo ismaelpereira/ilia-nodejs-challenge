@@ -39,9 +39,68 @@ This microservice must be a digital Wallet where the user transactions will be s
     - Internal Communication Security (JWT, SSL, ...), if it is JWT the PrivateKey must be ILIACHALLENGE_INTERNAL (passed by env var).
     - Communication between Microservices using any of the following: gRPC, REST, Kafka or via Messaging Queues (update your readme with the instructions to run if using a Docker/Container environment).
 
-#### In the end, send us your fork repo updated. As soon as you finish, please let us know.
+## 🧠 Architectural Decisions
 
-#### We are available to answer any questions.
+### Microservices with isolated databases
 
+Each microservice owns its own database:
 
-Happy coding! 🤓
+- User DB → user identity data
+- Wallet DB → wallet, balance, and transactions
+
+Although databases are isolated, both services are aware of the userId, which allows:
+
+- Faster queries
+- No cross-service joins
+- Clear ownership of data
+
+This mirrors real-world financial systems where data duplication is intentional for performance and autonomy.
+
+### Monetary safety
+
+Because this system handles monetary movements:
+
+- Prisma ORM was chosen
+
+- All balance updates and transactions use SQL transactions
+
+- Pessimistic locking (FOR UPDATE) is used to prevent race conditions
+
+This guarantees:
+
+- No double spending
+- No inconsistent balances
+
+### Authentication
+
+- JWT authentication is enforced on all protected routes
+- The private key is provided via environment variable (ILIACHALLENGE)
+- Passwords are not handled by this system
+
+Authentication is delegated to Firebase, which:
+
+- Manages credentials securely
+- Reduces attack surface
+- Avoids handling sensitive data in application code
+
+## 🔧 Things That Could Be Improved
+
+- Introduce a Turbo Repository (monorepo)
+- Extract Prisma Clients into shared packages
+- Reduce Prisma boilerplate across services
+- Simplify imports and scaling when new microservices are added
+
+## Start Everything
+
+```bash
+docker-compose up --build
+```
+
+## ✅ Summary
+
+This project focuses on:
+
+- Clean separation of responsibilities
+- Strong consistency guarantees
+- Real-world financial backend practices
+- Production-oriented architecture

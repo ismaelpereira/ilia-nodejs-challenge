@@ -36,7 +36,7 @@ export class WalletRepository {
   }
 
   findWallet(tx: Prisma.TransactionClient, userId: number) {
-    return this.prisma.wallet.findUnique({
+    return tx.wallet.findUnique({
       where: { user_id: userId },
     });
   }
