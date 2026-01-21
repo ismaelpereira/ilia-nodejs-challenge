@@ -1,6 +1,6 @@
 generator walletClient {
   provider = "prisma-client-js"
-  output = "../src/generated/wallet-client"
+  output = "../node_modules/@prisma/wallet-client"
 }
 
 datasource walletDb {

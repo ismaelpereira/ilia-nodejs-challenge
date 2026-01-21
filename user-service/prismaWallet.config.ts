@@ -7,7 +7,7 @@ export default defineConfig({
   schema: 'prisma/wallet.schema.prisma',
   
   migrations: {
-    path: 'prisma/wallet-migrations',
+    path: 'prisma/wallet-migrations/',
   },
   datasource: {
     url: process.env['WALLET_DATABASE_URL'],

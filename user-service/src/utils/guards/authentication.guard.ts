@@ -7,8 +7,6 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { FIREBASE_APP } from '../consts';
-import { FirebaseConnection } from '../firebase/firebase';
 import jwt from 'jsonwebtoken';
 
 @Injectable()
@@ -20,6 +18,7 @@ export class AuthenticationGuard implements CanActivate {
 
     try {
       const authHeader = req.headers.authorization;
+      console.log('authHeader: ', authHeader);
       if (!authHeader) {
         throw new HttpException('Missing Token', HttpStatus.UNAUTHORIZED);
       }
